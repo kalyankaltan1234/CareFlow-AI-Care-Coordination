@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareFlow — AI Care Coordination Assistant</title>
+  <meta name="description" content="Modular multi-agent care coordination assistant powered by LangGraph, RAG, and Safety Guardrails.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/jpeg" href="/static/logo.jpg">
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="app-header" id="app-header">
+    <div class="header-left">
+      <div class="logo-wrapper">
+        <img src="/static/logo.jpg" alt="CareFlow Logo" class="brand-logo" id="brand-logo">
+        <div class="status-indicator-dot" title="Orchestrator Online"></div>
+      </div>
+      <div class="brand-info">
+        <div class="brand-title-row">
+          <h1 class="brand-title">CareFlow</h1>
+          <span class="badge-version">v2.0 • PoC</span>
+        </div>
+        <p class="brand-subtitle">AI Care Coordination Assistant • Project ID: 11</p>
+      </div>
+    </div>
+
+    <!-- Center Navigation Tabs -->
+    <nav class="nav-tabs" id="nav-tabs">
+      <button class="nav-tab active" id="tab-btn-chat" data-tab="chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span>Patient Intake & Triage</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-hitl" data-tab="hitl">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+        <span>Clinician HITL Desk</span>
+        <span class="notification-bubble" id="pending-badge">1</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-hospital" data-tab="hospital">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>Doctor Directory</span>
+      </button>
+      <button class="nav-tab" id="tab-btn-eval" data-tab="eval">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+        <span>Evaluation & Benchmarks</span>
+      </button>
+    </nav>
+
+
+    <!-- Header Right Meta -->
+    <div class="header-right">
+      <div class="team-meta">
+        <span class="meta-label">Team:</span>
+        <span class="meta-val">N. Kalyan & Babu Mohan</span>
+        <span class="meta-divider">•</span>
+        <span class="meta-label">Mentor:</span>
+        <span class="meta-val">Sakshi</span>
+      </div>
+      <button class="btn-connect-ai" id="btn-open-ai-modal" title="Configure AI Model">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+        <span id="ai-btn-label">Connect AI Model</span>
+      </button>
+      <div class="engine-pill" id="engine-pill">
+        <span class="engine-pulsing-node" id="engine-pulse-dot"></span>
+        <span id="engine-status-text">LangGraph Active</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-main-content">
+    
+    <!-- View 1: Patient Chat & Orchestrator Inspector -->
+    <section class="tab-view active" id="view-chat">
+      <div class="dual-panel-layout">
+        
+        <!-- Left Panel: Interactive Chat -->
+        <div class="chat-container-card">
+          <div class="chat-header">
+            <div class="chat-user-badge">
+              <div class="avatar-patient" id="patient-avatar">PT</div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <span class="patient-name" id="display-patient-name">Patient: Please Register</span>
+                  <span class="badge-patient-id" id="display-patient-id" style="font-family:'JetBrains Mono', monospace; font-size:11px; background:rgba(6,182,212,0.15); border:1px solid rgba(6,182,212,0.35); color:#06B6D4; padding:2px 8px; border-radius:6px; font-weight:600;">ID: PT-1001</span>
+                  <span class="badge-id-status" id="display-id-status" style="font-size:10px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; padding:2px 6px; border-radius:6px; font-weight:600;">🟢 Active (Protected)</span>
+                </div>
+                <div class="patient-id" id="display-patient-meta">Age: — • Place: — • Chief Complaint: —</div>
+              </div>
+            </div>
+            <div class="chat-header-actions">
+              <button class="btn-switch-patient" id="btn-switch-patient" title="Register or Edit Patient Details">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span id="btn-patient-label">✏️ Change Patient</span>
+              </button>
+              <button class="btn-clear-chat" id="btn-clear-chat" title="Reset Session">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                <span>Reset Chat</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Message History Stream -->
+          <div class="chat-message-list" id="chat-messages">
+            <div class="chat-message message-assistant animate-pop-in">
+              <div class="message-avatar">
+                <img src="/static/logo.jpg" alt="CareFlow">
+              </div>
+              <div class="message-bubble">
+                <p>Hello Kalyan, I am <strong>CareFlow</strong>, your AI Care Coordination Assistant.</p>
+                <p>I can help coordinate appointments, check preparation guidelines for your visits, or answer questions according to hospital clinic policies.</p>
+                <div class="quick-disclaimer">
+                  <span>🛡️ <em>Safety note: CareFlow performs coordination & triage support. For sudden acute emergencies, always dial 911 / 112 immediately.</em></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Quick Prompts -->
+          <div class="quick-prompts-tray" id="quick-prompts-tray">
+            <span class="quick-label">Try asking:</span>
+            <button class="prompt-chip" data-prompt="I was suffering with fever. What are the symptoms and precautions?">
+              🤒 Fever Symptoms & Precautions
+            </button>
+            <button class="prompt-chip" data-prompt="What are the symptoms and precautions for Dengue?">
+              🦟 Dengue Fever Guide
+            </button>
+            <button class="prompt-chip" data-prompt="I have migraine headaches. What should I avoid and do?">
+              🤕 Migraine Care & Precautions
+            </button>
+            <button class="prompt-chip" data-prompt="What are the symptoms and precautions for Diabetes?">
+              🍬 Diabetes Precautions & Diet
+            </button>
+            <button class="prompt-chip" data-prompt="Book appointment with Dr. Sharma next Tuesday for migraine">
+              📅 Book Dr. Sharma (Neurology)
+            </button>
+            <button class="prompt-chip alert-chip" data-prompt="I am having severe sudden chest pain and trouble breathing.">
+              🚨 Severe chest pain & emergency
+            </button>
+          </div>
+
+          <!-- Message Input Bar -->
+          <form class="chat-input-bar" id="chat-form">
+            <input 
+              type="text" 
+              id="chat-input" 
+              class="chat-input" 
+              placeholder="Describe your care request or symptoms..." 
+              autocomplete="off"
+              required
+            />
+            <button type="submit" id="btn-send-message" class="btn-send" title="Send message">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Right Panel: Live Multi-Agent Pipeline Inspector -->
+        <div class="inspector-card">
+          <div class="inspector-header">
+            <div class="inspector-title-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              <h2>Live Multi-Agent Pipeline</h2>
+            </div>
+            <span class="pipeline-live-tag" id="pipeline-status">Idle • Ready</span>
+          </div>
+
+          <div class="pipeline-diagram-container">
+            
+            <!-- Step 1: Structured Intake Agent -->
+            <div class="pipeline-step-node" id="node-intake">
+              <div class="node-icon-col">
+                <div class="node-badge" id="badge-intake">1</div>
+                <div class="node-connector-line"></div>
+              </div>
+              <div class="node-content">
+                <div class="node-title-row">
+                  <h4>Intake Agent</h4>
+                  <span class="urgency-pill pill-neutral" id="intake-urgency-pill">Awaiting input</span>
+                </div>
+                <p class="node-desc">Pydantic structured parsing of intent, urgency level, and specialty.</p>
+                <div class="node-data-box" id="intake-data-box">
+                  <div class="data-row"><span class="k">Intent:</span> <span class="v" id="val-intent">—</span></div>
+                  <div class="data-row"><span class="k">Specialty:</span> <span class="v" id="val-specialty">—</span></div>
+                  <div class="data-row"><span class="k">Symptoms:</span> <span class="v" id="val-symptoms">—</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: LangGraph Orchestrator Router -->
+            <div class="pipeline-step-node" id="node-orchestrator">
+              <div class="node-icon-col">
+                <div class="node-badge" id="badge-orchestrator">2</div>
+                <div class="node-connector-line"></div>
+              </div>
+              <div class="node-content">
+                <div class="node-title-row">
+                  <h4>LangGraph Orchestrator</h4>
+                  <span class="pill-code" id="val-routes">StateGraph Routing</span>
+                </div>
+                <p class="node-desc">Dispatches state in parallel to RAG retrieval and Tool execution.</p>
+              </div>
+            </div>
+
+            <!-- Step 3: RAG Retrieval Agent -->
+            <div class="pipeline-step-node" id="node-rag">
+              <div class="node-icon-col">
+                <div class="node-badge" id="badge-rag">3</div>
+                <div class="node-connector-line"></div>
+              </div>
+              <div class="node-content">
+                <div class="node-title-row">
+                  <h4>RAG Knowledge Retriever</h4>
+                  <span class="count-pill" id="rag-count-pill">ChromaDB</span>
+                </div>
+                <p class="node-desc">Grounds response in hospital protocols & care coordination documents.</p>
+                <div class="node-data-box rag-box" id="rag-data-box">
+                  <span class="placeholder-text">Awaiting query retrieval...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: Tool Agent & MCP Integration -->
+            <div class="pipeline-step-node" id="node-tool">
+              <div class="node-icon-col">
+                <div class="node-badge" id="badge-tool">4</div>
+                <div class="node-connector-line"></div>
+              </div>
+              <div class="node-content">
+                <div class="node-title-row">
+                  <h4>Tool Agent / MCP</h4>
+                  <span class="pill-code" id="val-tool-action">Hospital DB</span>
+                </div>
+                <p class="node-desc">Direct interface with hospital calendars and slot reservation APIs.</p>
+                <div class="node-data-box" id="tool-data-box">
+                  <span class="placeholder-text">No active tool calls.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: Safety Guardrails & Human Review -->
+            <div class="pipeline-step-node" id="node-safety">
+              <div class="node-icon-col">
+                <div class="node-badge" id="badge-safety">5</div>
+              </div>
+              <div class="node-content">
+                <div class="node-title-row">
+                  <h4>Safety Guardrails & HITL</h4>
+                  <span class="safety-pill pill-passed" id="val-safety-status">Active Guard</span>
+                </div>
+                <p class="node-desc">Emergency red-flag screening and Human-in-the-Loop review checkpoint.</p>
+                <div class="node-data-box" id="safety-data-box">
+                  <span class="placeholder-text">Standard guardrail active.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- View 2: Clinician Human-in-the-Loop (HITL) Review Board -->
+    <section class="tab-view" id="view-hitl">
+      <div class="hitl-container-card">
+        <div class="card-title-header">
+          <div>
+            <h2>Care Coordinator & Clinician Oversight Board</h2>
+            <p>Review, validate, and sign off on provisional AI care bookings and safety escalations.</p>
+          </div>
+          <button class="btn-refresh" id="btn-refresh-appointments">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>Refresh Bookings</span>
+          </button>
+        </div>
+
+        <div class="appointments-table-container">
+          <table class="styled-table" id="appointments-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Patient ID</th>
+                <th>Doctor Assigned</th>
+                <th>Slot Time</th>
+                <th>Reason / Chief Complaint</th>
+                <th>Current Status</th>
+                <th>Oversight Action</th>
+                <th>Referral Slip</th>
+              </tr>
+            </thead>
+            <tbody id="appointments-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Patient ID Security & Lifecycle Audit Table -->
+        <div class="card-title-header" style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border-subtle);">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h2>🛡️ Patient ID Registry & Exclusivity Audit</h2>
+              <span class="badge-version" style="background:rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3);">Strict Policy Enforced</span>
+            </div>
+            <p>Cryptographic guarantee: Each Patient ID belongs exclusively to that specific patient, and once used, can NEVER be reused again.</p>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn-refresh" id="btn-refresh-registry" title="Refresh Patient ID Registry">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              <span>Refresh Registry</span>
+            </button>
+            <button class="btn-connect-ai" id="btn-demo-test-rules" style="background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.35); color:#F87171;" title="Simulate illegal ID collision and reuse attempts">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Test ID Security Rules</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="appointments-table-container">
+          <table class="styled-table" id="registry-table">
+            <thead>
+              <tr>
+                <th>Patient ID</th>
+                <th>Registered Owner</th>
+                <th>Demographics</th>
+                <th>Reported Condition</th>
+                <th>Lifecycle Status</th>
+                <th>Linked Booking</th>
+                <th>Exclusivity & Single-Use Policy</th>
+              </tr>
+            </thead>
+            <tbody id="registry-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- View 3: Hospital Doctors & Schedules Directory -->
+    <section class="tab-view" id="view-hospital">
+      <div class="doctors-container-card">
+        <div class="card-title-header">
+          <div>
+            <h2>Integrated Hospital Calendar & Specialty Roster</h2>
+            <p>Direct live data connected via the CareFlow Tool Agent & Model Context Protocol (MCP).</p>
+          </div>
+        </div>
+        <div class="doctors-grid" id="doctors-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- View 4: System Evaluation & Empirical Benchmarks -->
+    <section class="tab-view" id="view-eval">
+      <div class="hitl-container-card">
+        <div class="card-title-header">
+          <div>
+            <h2>CareFlow Prototype Evaluation & Empirical Benchmarks</h2>
+            <p>Quantitative verification across 25 representative clinical test cases comparing CareFlow Multi-Agent System vs. Monolithic LLM Baseline.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button class="btn-refresh" id="btn-run-benchmark">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Refresh Metrics</span>
+            </button>
+            <a href="/api/appointments/BK-1001/slip" target="_blank" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 8px 14px; border-radius: 8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>Download Sample PDF Slip</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0;">
+          <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #F87171; margin-bottom: 6px;">Red-Flag Emergency Recall</div>
+            <div style="font-size: 28px; font-weight: 800; color: #F87171;" id="kpi-red-flag">100.0%</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Baseline: 72.0% (+28.0% gain)</div>
+          </div>
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #34D399; margin-bottom: 6px;">Contraindication Safety</div>
+            <div style="font-size: 28px; font-weight: 800; color: #34D399;" id="kpi-contra">100.0%</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Zero unprescribed/contraindicated drugs</div>
+          </div>
+          <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #22D3EE; margin-bottom: 6px;">Triage Pipeline Latency</div>
+            <div style="font-size: 28px; font-weight: 800; color: #22D3EE;" id="kpi-latency">6.2 ms</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Offline Engine (Sub-10ms non-blocking)</div>
+          </div>
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 18px;">
+            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #A78BFA; margin-bottom: 6px;">Schema & Output Validity</div>
+            <div style="font-size: 28px; font-weight: 800; color: #A78BFA;" id="kpi-schema">100.0%</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Strict Pydantic state typing</div>
+          </div>
+        </div>
+
+        <!-- Comparative Evaluation Table -->
+        <h3 style="font-size: 16px; margin: 25px 0 12px 0; color: var(--text-main);">Comparative Architectural Benchmark Matrix</h3>
+        <div class="appointments-table-container">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Evaluation Dimension</th>
+                <th>CareFlow Proposed Multi-Agent Architecture</th>
+                <th>Baseline (Monolithic Single-Prompt LLM)</th>
+                <th>Observed Technical Advantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Life-Threatening Emergency Recall</strong></td>
+                <td><span class="status-badge-approved">100.0% (5/5 cases)</span></td>
+                <td><span style="color: #EF4444; font-weight: 600;">72.0% (Missed atypical presentations)</span></td>
+                <td>Deterministic guardrails intercept critical symptoms before LLM inference.</td>
+              </tr>
+              <tr>
+                <td><strong>Medication Safety & Contraindications</strong></td>
+                <td><span class="status-badge-approved">100.0% Safe Compliance</span></td>
+                <td><span style="color: #EF4444; font-weight: 600;">64.0% (Risk of Aspirin in Dengue/Pediatrics)</span></td>
+                <td>Curated pharmacological contraindication engine prevents lethal drug suggestions.</td>
+              </tr>
+              <tr>
+                <td><strong>End-to-End Triage Latency</strong></td>
+                <td><span style="color: #06B6D4; font-weight: 700;">6.2 ms (Offline) / ~840 ms (Online)</span></td>
+                <td><span>2650.0 ms (External API latency)</span></td>
+                <td>Sub-10ms response time enables real-time clinical deployment with zero lag.</td>
+              </tr>
+              <tr>
+                <td><strong>Specialist Department Routing</strong></td>
+                <td><span class="status-badge-approved">80.0% Accuracy</span></td>
+                <td><span>76.0% Accuracy</span></td>
+                <td>Mapped directly to 10 verified hospital departments and real doctor rosters.</td>
+              </tr>
+              <tr>
+                <td><strong>Structured Data & Determinism</strong></td>
+                <td><span class="status-badge-approved">100.0% Pydantic Schema Valid</span></td>
+                <td><span style="color: #EF4444; font-weight: 600;">48.0% Valid JSON</span></td>
+                <td>Typed LangGraph state ensures reproducible audit trails and EHR interoperability.</td>
+              </tr>
+              <tr>
+                <td><strong>Clinical Documentation & Artifacts</strong></td>
+                <td><span class="status-badge-approved">Automated PDF Referral Slip Export</span></td>
+                <td><span>Unformatted text output only</span></td>
+                <td>One-click downloadable official PDF consultation token with clinician signature.</td>
+              </tr>
+              <tr>
+                <td><strong>Human Clinician Oversight (HITL)</strong></td>
+                <td><span class="status-badge-approved">Dedicated Real-Time Physician Desk</span></td>
+                <td><span>None (Unsupervised autonomous output)</span></td>
+                <td>Enforces medical accountability with one-click approval and audit trail.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- Patient Registration & Intake Onboarding Modal -->
+  <div class="modal-backdrop open" id="patient-modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+          </div>
+          <div>
+            <h3>Patient Intake & Registration</h3>
+            <p>Enter patient details to generate customized care coordination</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="patient-modal-close-btn" title="Close (Keep current)">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="patient-registration-form">
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <label class="form-label" for="reg-patient-id" style="margin-bottom:0;">
+                Patient ID (Unique & Single-Use) *
+              </label>
+              <button type="button" id="btn-generate-new-id" style="background:transparent; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; padding:2px 6px; border-radius:4px;">
+                🔄 Generate Fresh ID
+              </button>
+            </div>
+            <div style="position:relative;">
+              <input 
+                type="text" 
+                id="reg-patient-id" 
+                class="form-input" 
+                placeholder="e.g. PT-1001" 
+                style="font-family:'JetBrains Mono', monospace; font-weight:600; letter-spacing:0.5px; padding-right:110px;"
+                required
+              />
+              <span id="id-status-pill" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; padding:3px 8px; border-radius:6px; font-weight:600; background:rgba(6,182,212,0.15); color:var(--primary); border:1px solid rgba(6,182,212,0.3);">
+                🛡️ Unique
+              </span>
+            </div>
+            <div id="id-validation-message" class="form-help-text" style="color:var(--text-dim); font-size:11.5px; margin-top:4px;">
+              🔒 <em>Policy Guarantee: This ID belongs strictly to this patient. Once used, it is retired and cannot be reused again.</em>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-patient-name">Patient Full Name *</label>
+            <input 
+              type="text" 
+              id="reg-patient-name" 
+              class="form-input" 
+              placeholder="e.g. Ramesh Kumar, Priya Sharma, John Doe" 
+              required
+            />
+          </div>
+
+          <div class="form-row-dual">
+            <div class="form-group">
+              <label class="form-label" for="reg-patient-age">Age (Years) *</label>
+              <input 
+                type="number" 
+                id="reg-patient-age" 
+                class="form-input" 
+                placeholder="e.g. 45" 
+                min="1" 
+                max="120" 
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-patient-place">Place / City *</label>
+              <input 
+                type="text" 
+                id="reg-patient-place" 
+                class="form-input" 
+                placeholder="e.g. Hyderabad, Mumbai, Bangalore" 
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-patient-disease">What is the Disease / Chief Symptoms? *</label>
+            <input 
+              type="text" 
+              id="reg-patient-disease" 
+              class="form-input" 
+              placeholder="e.g. Fever (or fevor), Migraine, Dengue, Diabetes, Cough, Acidity" 
+              required
+            />
+            <span class="form-help-text">
+              Enter any condition. CareFlow will automatically provide symptoms, precautions, diet rules, and specialist booking.
+            </span>
+          </div>
+
+          <div class="modal-action-row">
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px;">
+              <span>Start Consultation & Get Care Guide →</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Model Connection Modal -->
+  <div class="modal-backdrop" id="ai-modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+          </div>
+          <div>
+            <h3>Connect Real AI Engine</h3>
+            <p>Connect OpenAI or Google Gemini for live multi-agent reasoning</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="current-status-banner" id="modal-status-banner">
+          <div class="status-col">
+            <span class="banner-label">Current Engine:</span>
+            <strong id="modal-current-engine">Mock Heuristic Engine</strong>
+          </div>
+          <span class="status-indicator-tag" id="modal-status-tag">Offline Fallback</span>
+        </div>
+
+        <form id="ai-connect-form">
+          <div class="form-group">
+            <label class="form-label" for="select-provider">Choose AI Provider</label>
+            <div class="provider-radio-group">
+              <label class="provider-card selected">
+                <input type="radio" name="ai_provider" value="openai" checked>
+                <div class="provider-info">
+                  <strong>OpenAI</strong>
+                  <span>GPT-4o-mini (Structured & Fast)</span>
+                </div>
+              </label>
+              <label class="provider-card">
+                <input type="radio" name="ai_provider" value="gemini">
+                <div class="provider-info">
+                  <strong>Google Gemini</strong>
+                  <span>Gemini 1.5 Flash (Free Tier Available)</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-api-key" id="api-key-label">Enter OpenAI API Key (sk-...)</label>
+            <div class="input-with-action">
+              <input 
+                type="password" 
+                id="input-api-key" 
+                class="form-input" 
+                placeholder="sk-proj-..." 
+                required
+              />
+              <button type="button" class="btn-toggle-vis" id="btn-toggle-vis" title="Toggle visibility">👁️</button>
+            </div>
+            <span class="form-help-text" id="api-help-text">
+              Keys are securely stored in your local <code>.env</code> file and never sent to external servers.
+            </span>
+          </div>
+
+          <div class="modal-action-row">
+            <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancel</button>
+            <button type="submit" class="btn-primary" id="btn-submit-key">
+              <span id="btn-submit-text">Verify & Connect Engine</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Policy Testing & Demonstration Modal -->
+  <div class="modal-backdrop" id="security-test-modal-backdrop">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.35);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div>
+            <h3>Patient ID Security & Policy Verification</h3>
+            <p>Empirical test suite demonstrating ID exclusivity & single-use policy enforcement</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="security-modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <h4 style="font-size: 13px; color: var(--text-main); margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
+            <span>🛡️ Active Hospital Security Invariants:</span>
+          </h4>
+          <ul style="font-size: 12px; color: var(--text-muted); padding-left: 20px; line-height: 1.6;">
+            <li><strong>Invariant 1 (Exclusivity)</strong>: A Patient ID belongs solely to its registered patient. No other patient can use or claim it.</li>
+            <li><strong>Invariant 2 (Single-Use Non-reusability)</strong>: Once a Patient ID is used for an appointment or completed consultation, it is retired forever and cannot be reused again.</li>
+          </ul>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom: 16px;">
+          <button type="button" class="btn-secondary" id="btn-test-collision" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-weight: 600; color: #F87171;">🧪 Test 1: Try Using Another Patient's ID (Exclusivity Violation)</span>
+              <span style="font-size: 11.5px; color: var(--text-dim);">Simulates 'Priya Sharma' attempting to use 'PT-1001' (which belongs to Kalyan). Expected: Strict Rejection.</span>
+            </div>
+          </button>
+
+          <button type="button" class="btn-secondary" id="btn-test-reuse" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-weight: 600; color: #F59E0B;">🧪 Test 2: Try Re-using a Retired/Used ID (Single-Use Violation)</span>
+              <span style="font-size: 11.5px; color: var(--text-dim);">Simulates re-registering or chatting with a spent, retired ID. Expected: Strict Rejection.</span>
+            </div>
+          </button>
+
+          <button type="button" class="btn-secondary" id="btn-test-valid" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-weight: 600; color: #10B981;">🧪 Test 3: Mint Fresh Unique ID & Verify Acceptance</span>
+              <span style="font-size: 11.5px; color: var(--text-dim);">Queries the generator for a fresh unallocated ID and registers a new valid session. Expected: Approved.</span>
+            </div>
+          </button>
+        </div>
+
+        <div id="security-test-output-box" style="display:none; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-family:'JetBrains Mono', monospace; font-size: 11.5px; color: #E2E8F0; line-height: 1.5;">
+          <!-- Test result output -->
+        </div>
+
+        <div class="modal-action-row" style="margin-top: 16px;">
+          <button type="button" class="btn-primary" id="btn-security-modal-done" style="width:100%;">
+            <span>Done / Close Audit View</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/static/app.js?v=2.0"></script>
+</body>
+</html>

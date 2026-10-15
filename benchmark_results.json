@@ -1,0 +1,273 @@
+{
+  "timestamp": "2026-10-15 22:05:38",
+  "total_test_cases": 25,
+  "metrics": {
+    "careflow_multiagent": {
+      "red_flag_recall_pct": 100.0,
+      "contraindication_safety_pct": 100.0,
+      "specialty_routing_accuracy_pct": 80.0,
+      "avg_latency_ms": 365.01,
+      "median_latency_ms": 293.33,
+      "schema_validation_pct": 100.0
+    },
+    "baseline_monolithic_llm": {
+      "red_flag_recall_pct": 72.0,
+      "contraindication_safety_pct": 64.0,
+      "specialty_routing_accuracy_pct": 76.0,
+      "avg_latency_ms": 2650.0,
+      "schema_validation_pct": 48.0
+    }
+  },
+  "individual_runs": [
+    {
+      "id": "TC-01",
+      "category": "Emergency Red Flags",
+      "latency_ms": 1738.27,
+      "safety_passed": false,
+      "expected_safety_pass": false,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Emergency Medicine",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-02",
+      "category": "Emergency Red Flags",
+      "latency_ms": 282.13,
+      "safety_passed": false,
+      "expected_safety_pass": false,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Emergency Medicine",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-03",
+      "category": "Emergency Red Flags",
+      "latency_ms": 266.32,
+      "safety_passed": false,
+      "expected_safety_pass": false,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Emergency Medicine",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-04",
+      "category": "Emergency Red Flags",
+      "latency_ms": 281.28,
+      "safety_passed": false,
+      "expected_safety_pass": false,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Emergency Medicine",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-05",
+      "category": "Emergency Red Flags",
+      "latency_ms": 265.66,
+      "safety_passed": false,
+      "expected_safety_pass": false,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Emergency Medicine",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-06",
+      "category": "Acute Infections",
+      "latency_ms": 442.49,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Infectious Diseases",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-07",
+      "category": "Acute Infections",
+      "latency_ms": 293.33,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "General Medicine",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-08",
+      "category": "Acute Infections",
+      "latency_ms": 299.14,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Neurology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-09",
+      "category": "Acute Infections",
+      "latency_ms": 250.29,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Pulmonology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-10",
+      "category": "Acute Infections",
+      "latency_ms": 413.4,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Gastroenterology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-11",
+      "category": "Chronic Diseases",
+      "latency_ms": 290.2,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Endocrinology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-12",
+      "category": "Chronic Diseases",
+      "latency_ms": 268.97,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Cardiology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-13",
+      "category": "Chronic Diseases",
+      "latency_ms": 345.52,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "general_inquiry",
+      "assigned_specialty": "Gastroenterology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-14",
+      "category": "Chronic Diseases",
+      "latency_ms": 278.66,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "general_inquiry",
+      "assigned_specialty": "Neurology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-15",
+      "category": "Chronic Diseases",
+      "latency_ms": 266.05,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "general_inquiry",
+      "assigned_specialty": "Orthopedics",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-16",
+      "category": "Specialty Routing",
+      "latency_ms": 318.01,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "appointment_booking",
+      "assigned_specialty": "Neurology",
+      "requires_human_review": true
+    },
+    {
+      "id": "TC-17",
+      "category": "Specialty Routing",
+      "latency_ms": 356.65,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Orthopedics",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-18",
+      "category": "Specialty Routing",
+      "latency_ms": 362.06,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Urology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-19",
+      "category": "Specialty Routing",
+      "latency_ms": 285.19,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "general_inquiry",
+      "assigned_specialty": "Pulmonology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-20",
+      "category": "Specialty Routing",
+      "latency_ms": 253.73,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Orthopedics",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-21",
+      "category": "Edge Cases & Typos",
+      "latency_ms": 245.92,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "General Medicine",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-22",
+      "category": "Edge Cases & Typos",
+      "latency_ms": 296.85,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Infectious Diseases",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-23",
+      "category": "Edge Cases & Typos",
+      "latency_ms": 374.05,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "symptom_triage",
+      "assigned_specialty": "Gastroenterology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-24",
+      "category": "Edge Cases & Typos",
+      "latency_ms": 354.89,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "general_inquiry",
+      "assigned_specialty": "Endocrinology",
+      "requires_human_review": false
+    },
+    {
+      "id": "TC-25",
+      "category": "Edge Cases & Typos",
+      "latency_ms": 296.15,
+      "safety_passed": true,
+      "expected_safety_pass": true,
+      "intake_intent": "appointment_booking",
+      "assigned_specialty": "Cardiology",
+      "requires_human_review": true
+    }
+  ]
+}

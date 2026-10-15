@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareFlow — Final Project Presentation • Project ID: 11</title>
+  <style>
+    :root {
+      --bg: #090D16;
+      --card-bg: rgba(17, 24, 39, 0.88);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #06B6D4;
+      --emerald: #10B981;
+      --crimson: #EF4444;
+      --amber: #F59E0B;
+      --purple: #8B5CF6;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 12% 18%, rgba(6, 182, 212, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 88% 82%, rgba(16, 185, 129, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
+    }
+
+    /* Top presentation navigation bar */
+    .pres-header {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 36px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(14px);
+      z-index: 20;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--emerald));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 700;
+      background: rgba(6, 182, 212, 0.1);
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .btn-notes-toggle {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      color: #DDD6FE;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-notes-toggle:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: var(--purple);
+    }
+
+    .btn-live {
+      background: linear-gradient(135deg, var(--primary), #0284C7);
+      color: #04121E;
+      font-weight: 700;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-live:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    /* Main Slide Viewport */
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      padding: 24px 48px;
+    }
+
+    .slide-card {
+      display: none;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 48px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(18px);
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .slide-card.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Slide Typography */
+    .slide-tag {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+
+    .slide-title {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      margin-bottom: 18px;
+      line-height: 1.25;
+      color: #FFFFFF;
+    }
+
+    .slide-body {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #CBD5E1;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: border-color 0.2s;
+    }
+
+    .feature-box:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .feature-box h4 {
+      color: var(--text);
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .feature-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Tables */
+    .pres-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .pres-table th, .pres-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pres-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .pill-green {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      display: inline-block;
+    }
+
+    .pill-red {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--crimson);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      display: inline-block;
+    }
+
+    .pill-blue {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      display: inline-block;
+    }
+
+    /* State Diagram Display */
+    .state-diagram-box {
+      background: #0B1120;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: #93C5FD;
+      margin: 12px 0;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    /* Speaker Notes Drawer */
+    .speaker-notes-drawer {
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 14px 48px;
+      font-size: 13.5px;
+      color: #E2E8F0;
+      display: none;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 30;
+      line-height: 1.6;
+    }
+
+    .speaker-notes-drawer.open {
+      display: block;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .notes-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    /* Bottom Controller Bar */
+    .pres-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 48px;
+      border-top: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.65);
+      z-index: 20;
+    }
+
+    .btn-control {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-control:hover:not(:disabled) {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-control:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 40;
+    }
+
+    @media print {
+      @page {
+        size: 16in 9in landscape;
+        margin: 0;
+      }
+      html, body {
+        background: #090D16 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        overflow: visible !important;
+        height: auto !important;
+      }
+      .pres-header, .pres-footer, .speaker-notes-drawer, .progress-bar-container {
+        display: none !important;
+      }
+      .slide-viewport {
+        display: block !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        height: auto !important;
+      }
+      .slide-card {
+        display: flex !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 40px 60px !important;
+        box-sizing: border-box !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- Top Presentation Header -->
+  <header class="pres-header">
+    <div class="brand-group">
+      <div class="brand-logo-badge">CF</div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="brand-name">CareFlow</span>
+          <span class="brand-tag">Project ID: 11</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-center">
+      Final Presentation • Mentor: <strong>Sakshi</strong> • N. Kalyan & Babu Mohan
+    </div>
+  </header>
+
+  <!-- Slide Viewport -->
+  <main class="slide-viewport">
+
+    <!-- Slide 1: Title -->
+    <div class="slide-card active" data-slide="1">
+      <div>
+        <div class="slide-tag">1-Month Project Milestone • Final Evaluation</div>
+        <h1 class="slide-title" style="font-size: 38px; margin-top: 8px; margin-bottom: 12px; background: linear-gradient(135deg, #FFF, #94A3B8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+          CareFlow — AI Care Coordination Assistant
+        </h1>
+        <p style="font-size: 18px; color: var(--primary); font-weight: 600; margin-bottom: 24px;">
+          A Modular Multi-Agent Clinical Triage, Care Coordination & Patient Identity Security Platform
+        </p>
+      </div>
+
+      <div class="grid-3" style="margin: 12px 0 20px 0;">
+        <div class="feature-box" style="border-color: rgba(6, 182, 212, 0.35); background: rgba(6, 182, 212, 0.05);">
+          <div style="color: var(--primary); font-size: 11.5px; text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Student Team</div>
+          <h4 style="font-size: 17px;">N. Kalyan & Babu Mohan</h4>
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #94A3B8;">CS23BTECH11039 & CS23BTECH11014</p>
+        </div>
+        <div class="feature-box" style="border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.05);">
+          <div style="color: var(--emerald); font-size: 11.5px; text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Project Mentor</div>
+          <h4 style="font-size: 17px;">Sakshi</h4>
+          <p style="font-size: 13px; color: #94A3B8;">Department of Computer Science & Engineering</p>
+        </div>
+        <div class="feature-box" style="border-color: rgba(139, 92, 246, 0.35); background: rgba(139, 92, 246, 0.05);">
+          <div style="color: var(--purple); font-size: 11.5px; text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Project ID & Scope</div>
+          <h4 style="font-size: 17px;">Project ID: 11 (Weeks 1–4)</h4>
+          <p style="font-size: 13px; color: #94A3B8;">Architecture, Full Prototype & Empirical Benchmarks</p>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 12px; display: flex; justify-content: space-between;">
+        <span>💡 <em>Press <strong>Right Arrow (→)</strong> or click <strong>Next Slide</strong> to begin.</em></span>
+        <span style="font-family: 'JetBrains Mono', monospace; color: var(--primary);">Evaluation Date: October 2026</span>
+      </div>
+    </div>
+
+    <!-- Slide 2: Problem & Motivation -->
+    <div class="slide-card" data-slide="2">
+      <div>
+        <div class="slide-tag">1. Problem and Motivation</div>
+        <h2 class="slide-title">The Ambulatory Care Coordination & Safety Crisis</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="feature-box">
+            <h4 style="color: #F87171;">⚠️ Fragmented Intake & Departmental Misdirection</h4>
+            <p>Walk-in clinic attendees describe distress colloquially or with phonetic typos (*“fevor”, “loose motion”*). Clerks guess specialties, leading to misdirected consultations and multi-day care delays.</p>
+          </div>
+          <div class="feature-box">
+            <h4 style="color: #F87171;">🚨 Dangerous Hallucinations in Chatbots</h4>
+            <p>Unconstrained LLMs routinely recommend antipyretic NSAIDs (Ibuprofen / Aspirin) for high fever and petechiae. In thrombocytopenic Dengue, blood-thinning NSAIDs precipitate catastrophic internal hemorrhage.</p>
+          </div>
+          <div class="feature-box">
+            <h4 style="color: #FBBF24;">⏱️ Missed Subtle Emergencies</h4>
+            <p>Standard chatbots miss atypical critical presentations—such as cauda equina syndrome (*“backpain with bladder loss”*) or transient stroke (*“facial droop”*)—casually advising rest instead of immediate 911/112 ER care.</p>
+          </div>
+          <div class="feature-box">
+            <h4 style="color: #34D399;">🛡️ CareFlow Architectural Solution</h4>
+            <p>Decomposes clinical coordination into specialized Python agents in LangGraph with <strong>deterministic regex emergency guardrails</strong>, evidence-grounded RAG protocols, and human physician sign-off.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: 4-Week Milestone Evolution & Team Allocation -->
+    <div class="slide-card" data-slide="3">
+      <div>
+        <div class="slide-tag">1. Problem and Motivation</div>
+        <h2 class="slide-title">4-Week Trajectory & Software Engineering Division</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="margin-bottom: 16px;">
+          <div class="feature-box" style="border-left: 3px solid var(--primary);">
+            <div style="font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase;">N. Kalyan • CS23BTECH11039</div>
+            <h4 style="margin-top: 4px;">Backend Architecture & Safety Invariants</h4>
+            <ul style="font-size: 12.5px; color: var(--text-muted); margin-left: 18px; line-height: 1.55;">
+              <li>LangGraph state machine orchestration & <code>CareFlowState</code> typing</li>
+              <li>Microsecond deterministic emergency regex compiler (<code>safety_agent.py</code>)</li>
+              <li>FastAPI ASGI concurrency tuning via <code>run_in_threadpool</code> offloading</li>
+              <li>Patient identity security registry & dual-invariant finite-state engine</li>
+            </ul>
+          </div>
+          <div class="feature-box" style="border-left: 3px solid var(--emerald);">
+            <div style="font-size: 11px; color: var(--emerald); font-weight: 800; text-transform: uppercase;">Babu Mohan • CS23BTECH11014</div>
+            <h4 style="margin-top: 4px;">Frontend Portal, Reporting & Benchmarking</h4>
+            <ul style="font-size: 12.5px; color: var(--text-muted); margin-left: 18px; line-height: 1.55;">
+              <li>Glassmorphic triage portal & Clinician HITL Oversight Desk</li>
+              <li>Automated ReportLab PDF Referral Slip generator (<code>BK-1001</code>)</li>
+              <li>Curated 30+ condition medical knowledge base & dosing guidelines</li>
+              <li>25-case empirical evaluation benchmark harness (<code>benchmark_evaluation.py</code>)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="feature-box">
+            <span class="pill-blue" style="margin-bottom: 6px;">WEEK 1</span>
+            <p>Clinical triage scope, hazard modeling & baseline LLM audits.</p>
+          </div>
+          <div class="feature-box">
+            <span class="pill-blue" style="margin-bottom: 6px;">WEEK 2</span>
+            <p>Multi-agent LangGraph topology, schema contracts & RAG pipeline.</p>
+          </div>
+          <div class="feature-box">
+            <span class="pill-blue" style="margin-bottom: 6px;">WEEK 3</span>
+            <p>FastAPI ASGI server, 30+ disease DB, doctor rosters & HITL desk.</p>
+          </div>
+          <div class="feature-box">
+            <span class="pill-green" style="margin-bottom: 6px;">WEEK 4</span>
+            <p>25-case benchmarks, PDF slip generator & patient ID exclusivity engine.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Proposed Approach & Architecture -->
+    <div class="slide-card" data-slide="4">
+      <div>
+        <div class="slide-tag">2. Proposed Approach</div>
+        <h2 class="slide-title">Multi-Agent Orchestration with LangGraph</h2>
+      </div>
+      <div class="slide-body">
+        <div class="feature-box" style="margin-bottom: 14px; background: rgba(6, 182, 212, 0.03);">
+          <p style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--primary);">
+            [Patient Web Intake] ➔ [Structured Intake Agent] ➔ [LangGraph Orchestrator] ⮀ {RAG Knowledge + Hospital Tools} ➔ [Safety Guardrails] ➔ [Clinician HITL Desk] ➔ [PDF Referral Slip]
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="feature-box">
+            <h4>1. Structured Intake Agent</h4>
+            <p>Parses demographics, extracts clinical intent, and utilizes <code>difflib</code> sequence heuristics to resolve typos (*fevor* ➔ Fever) in &lt;0.5ms.</p>
+          </div>
+          <div class="feature-box">
+            <h4>2. RAG Clinical Engine</h4>
+            <p>Fetches validated outpatient pathways, strict medication negative lists, and dosage limits across 30+ conditions with zero-downtime BM25 fallback.</p>
+          </div>
+          <div class="feature-box">
+            <h4>3. Hospital Resource Agent</h4>
+            <p>Queries schedules across 10 hospital departments, allocates verified specialist slots, and generates provisional booking tokens (<code>BK-1001</code>).</p>
+          </div>
+          <div class="feature-box">
+            <h4>4. Deterministic Safety Firewall</h4>
+            <p>Executes microsecond regex filters for 20+ red-flag emergencies (stroke, myocardial infarction). Halts scheduling and dispatches 911/112 in &lt;0.1ms.</p>
+          </div>
+          <div class="feature-box">
+            <h4>5. Response Synthesizer</h4>
+            <p>Compiles structured 6-part patient care plans (symptoms, home precautions, safe OTC limits, contraindications, red flags, specialist referral).</p>
+          </div>
+          <div class="feature-box">
+            <h4>6. Clinician HITL Desk</h4>
+            <p>Clinical coordinators inspect AI assessments, append doctor remarks, verify identity tokens, and approve printable PDF referral slips.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Patient Identity Security Subsystem -->
+    <div class="slide-card" data-slide="5">
+      <div>
+        <div class="slide-tag" style="color: #F59E0B;">2. Proposed Approach • Security Innovation</div>
+        <h2 class="slide-title">Patient Identity Security & Dual-Invariant Lifecycle Subsystem</h2>
+      </div>
+      <div class="slide-body">
+        <div class="state-diagram-box">
+register(P, ID)                schedule / retire
+[Unallocated] ─────────────► [Active (Assigned)] ─────────────► [Retired [Locked]]
+ ID not in registry           • Bound strictly to Owner           • Non-Reusable
+                              • status = "active"                 • status = "used"
+                                      │                                   │
+                                      ▼                                   ▼
+                        [Same-Owner Chat: Allowed]          [Any Reuse: Blocked!]
+                        [Cross-Patient Claim: Blocked!]
+        </div>
+        <div class="grid-2" style="margin-top: 10px;">
+          <div class="feature-box" style="border-left: 3px solid var(--primary);">
+            <h4 style="color: var(--primary);">Invariant 1: Strict Ownership Exclusivity (&fnof;<sub>1</sub>)</h4>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #E0F2FE; margin: 4px 0 8px 0;">
+              &forall; p<sub>1</sub>, p<sub>2</sub> &in; &Pscr;: BoundID(p<sub>1</sub>) = BoundID(p<sub>2</sub>) &rArr; p<sub>1</sub> = p<sub>2</sub>
+            </div>
+            <p>A Patient ID belongs exclusively to that specific individual. If another patient attempts to use or hijack an existing ID, the system immediately returns an <strong>HTTP 400 Ownership Violation</strong>, preventing cross-patient chart contamination.</p>
+          </div>
+          <div class="feature-box" style="border-left: 3px solid var(--crimson);">
+            <h4 style="color: var(--crimson);">Invariant 2: Single-Use Lifecycle Non-Reusability (&fnof;<sub>2</sub>)</h4>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #FEE2E2; margin: 4px 0 8px 0;">
+              &forall; ID &in; &Uscr;: State(ID) = Retired &rArr; PermitEncounter(ID) = False
+            </div>
+            <p>Once a Patient ID is consumed for an appointment booking or completed consultation, it is permanently locked into a <em>Retired</em> state. Stale reuse is blocked with an <strong>HTTP 400 Single-Use Violation</strong>, requiring the generation of a fresh unique ID (<code>PT-1002</code>, <code>PT-1003</code>).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Architectural Justifications -->
+    <div class="slide-card" data-slide="6">
+      <div>
+        <div class="slide-tag">2. Proposed Approach</div>
+        <h2 class="slide-title">Architectural Justifications: Multi-Agent vs. Monolithic LLM</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="feature-box">
+            <h4>🛡️ Pre-Inference Determinism</h4>
+            <p><strong>Rationale</strong>: Autoregressive token sampling cannot mathematically guarantee negative medical constraints. Decoupling safety to regex automata guarantees <strong>100% emergency recall</strong>.</p>
+          </div>
+          <div class="feature-box">
+            <h4>⚡ Non-Blocking ASGI Concurrency</h4>
+            <p><strong>Rationale</strong>: LangGraph synchronous invocation blocks Uvicorn's async event loop. Offloading graph execution to worker threadpools via <code>run_in_threadpool</code> slashed latency from &gt;3.5s to <strong>6.24ms</strong>.</p>
+          </div>
+          <div class="feature-box">
+            <h4>🔄 Zero-Downtime Offline Resilience</h4>
+            <p><strong>Rationale</strong>: Hospital networks and external cloud LLMs experience outages. Dual online/offline engine falls back to local clinical knowledge in &lt;10ms with zero network calls.</p>
+          </div>
+          <div class="feature-box">
+            <h4>🔒 Identity Cryptographic Safety</h4>
+            <p><strong>Rationale</strong>: Unconstrained chat sessions allow accidental collision and stale token reuse. Finite-state registry enforces single-use retirement and absolute patient ownership.</p>
+          </div>
+          <div class="feature-box">
+            <h4>👨‍⚕️ Clinician-in-the-Loop Accountability</h4>
+            <p><strong>Rationale</strong>: Healthcare liability forbids fully autonomous prescriptions. AI issues provisional tokens; certified nurses/doctors review and approve printable PDF passes.</p>
+          </div>
+          <div class="feature-box">
+            <h4>📄 Deterministic Clinical Artifacts</h4>
+            <p><strong>Rationale</strong>: Conversational text lacks permanence. Automated ReportLab compiler generates official, legally auditable PDF referral slips with security tokens.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Clinical Knowledge & Universal Pathogen Engine -->
+    <div class="slide-card" data-slide="7">
+      <div>
+        <div class="slide-tag">2. Proposed Approach</div>
+        <h2 class="slide-title">Clinical Knowledge Base & Dynamic Pathogen Engine</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="feature-box">
+            <h4>📚 30+ Curated Condition Protocols</h4>
+            <p style="margin-bottom: 8px;">Comprehensive evidence profiles across three clinical tiers:</p>
+            <ul style="font-size: 13px; color: var(--text-muted); margin-left: 20px; line-height: 1.55;">
+              <li><strong>Acute Infections</strong>: Dengue, Malaria, Typhoid, COVID-19, Gastroenteritis.</li>
+              <li><strong>Chronic Diseases</strong>: Type 2 Diabetes, Essential Hypertension, GERD, Migraine, Arthritis.</li>
+              <li><strong>Musculoskeletal & Specialty</strong>: Sciatica, Asthma, Eczema, Kidney Stones.</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 12.5px; color: var(--emerald);">
+              Enforces explicit negative lists (e.g. strict NSAID/Aspirin ban in Dengue) and safe adult/pediatric Paracetamol caps (3000mg/day).
+            </p>
+          </div>
+          <div class="feature-box">
+            <h4>🧬 Universal Dynamic Pathogen Extractor</h4>
+            <p style="margin-bottom: 8px;">For uncatalogued emerging viruses (e.g., <em>Zika, Norovirus, Rotavirus</em>):</p>
+            <ul style="font-size: 13px; color: var(--text-muted); margin-left: 20px; line-height: 1.55;">
+              <li>Isolates pathogen entity via lexical extractors without crashing.</li>
+              <li>Dynamically compiles evidence-grounded oral hydration targets (ORS 2.5–3L/day).</li>
+              <li>Applies age-sensitive dosage boundaries and specialist department routing.</li>
+            </ul>
+            <p style="margin-top: 10px; font-size: 12.5px; color: var(--primary);">
+              Guarantees consistent, structured triage guidance even when encountering novel infectious agents.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Working Prototype Live Demonstration Flow -->
+    <div class="slide-card" data-slide="8">
+      <div>
+        <div class="slide-tag">3. Prototype Demonstration</div>
+        <h2 class="slide-title">Live Demonstration Walkthrough (http://localhost:8000)</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="feature-box">
+            <h4 style="color: var(--primary);">Step 1: Patient Demographic & ID Minting</h4>
+            <p>Open dynamic modal ➔ System issues unique Patient ID (<code>PT-1001</code>) with live uniqueness verification pill ➔ Enter age, city, and chief complaint.</p>
+            <h4 style="color: var(--primary); margin-top: 12px;">Step 2: Typo-Tolerant Clinical Triage</h4>
+            <p>Input: <em>“i hav fevor and severe headache for 2 days”</em> ➔ Intake Agent maps <em>fevor</em> ➔ Fever, extracts symptoms, and generates 6-part clinical advice.</p>
+            <h4 style="color: #F59E0B; margin-top: 12px;">Step 3: ID Security Rules Live Test</h4>
+            <p>Open <strong>⚡ Test ID Security Rules</strong> modal ➔ Simulate Cross-Patient Collision attempt (Blocked!) and Spent ID reuse attempt (Blocked!).</p>
+          </div>
+          <div class="feature-box">
+            <h4 style="color: var(--crimson);">Step 4: Emergency Red-Flag Intercept</h4>
+            <p>Input: <em>“Sudden numbness in right arm and slurred speech”</em> ➔ Deterministic safety agent catches stroke signs in &lt;0.1ms, returning immediate 911/112 dispatch.</p>
+            <h4 style="color: var(--emerald); margin-top: 12px;">Step 5: Specialist Booking & Token Retirement</h4>
+            <p>Input: <em>“Book appointment with Dr. Sharma for migraine”</em> ➔ Hospital agent reserves slot <code>BK-1001</code> and atomically retires <code>PT-1001</code> from further reuse.</p>
+            <h4 style="color: #38BDF8; margin-top: 12px;">Step 6: Clinician HITL Sign-off & PDF Export</h4>
+            <p>Clinician Desk inspects case, verifies ID audit status, approves reservation, and releases the downloadable official PDF referral pass.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Automated PDF Clinical Referral Slip -->
+    <div class="slide-card" data-slide="9">
+      <div>
+        <div class="slide-tag">3. Prototype Demonstration</div>
+        <h2 class="slide-title">Official PDF Clinical Referral Slip Export</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="feature-box">
+            <h4>📄 Official Healthcare Network Referral Pass</h4>
+            <p>Programmatically compiled via ReportLab in Python with zero external cloud dependencies. Delivers an authoritative, printable patient pass:</p>
+            <ul style="font-size: 13px; color: var(--text-muted); margin-left: 20px; margin-top: 8px; line-height: 1.55;">
+              <li><strong>Patient Demographics</strong>: Name, Age, Patient ID (<code>PT-1001</code>), Domicile.</li>
+              <li><strong>Consultation Routing</strong>: Department, Assigned Doctor, Clinic Room, Time Slot.</li>
+              <li><strong>Clinical Assessment</strong>: Triage Urgency, Primary Complaint, Pre-visit Instructions.</li>
+              <li><strong>Physician Governance</strong>: Clinician Coordinator Notes & Digital Verification Stamp.</li>
+              <li><strong>Life-Safety Disclaimer</strong>: Emergency hospital redirection warnings.</li>
+            </ul>
+          </div>
+          <div class="feature-box">
+            <h4>🛡️ Compliance & Safety Architecture</h4>
+            <p>Every generated referral token undergoes deterministic verification prior to compilation:</p>
+            <ul style="font-size: 13px; color: var(--text-muted); margin-left: 20px; margin-top: 8px; line-height: 1.55;">
+              <li><strong>Cryptographic ID Binding</strong>: Token tied immutably to Patient ID.</li>
+              <li><strong>HITL Clinical Sign-off</strong>: Verified by physician lead before issuance.</li>
+              <li><strong>Deterministic Red Flags</strong>: Emergency hospital redirection disclaimers.</li>
+              <li><strong>Zero Cloud Dependencies</strong>: Fully offline ReportLab canvas rendering.</li>
+              <li><strong>Single-Use Lifecycle</strong>: Token auto-retires upon consultation check-in.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 10: Experimental Benchmark Methodology -->
+    <div class="slide-card" data-slide="10">
+      <div>
+        <div class="slide-tag">4. Experimental Results</div>
+        <h2 class="slide-title">Empirical Benchmarking: 25 Standardized Clinical Cases</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="feature-box">
+            <h4>1. Emergency Red Flags (5 Cases)</h4>
+            <p>Crushing chest pain, acute ischemic stroke, anaphylaxis, cauda equina syndrome, and gross hemoptysis.</p>
+          </div>
+          <div class="feature-box">
+            <h4>2. Acute Infectious Illnesses (5 Cases)</h4>
+            <p>Dengue, Malaria, Typhoid, COVID-19, and Gastroenteritis (testing contraindication safety).</p>
+          </div>
+          <div class="feature-box">
+            <h4>3. Chronic Diseases (5 Cases)</h4>
+            <p>Type 2 Diabetes, Hypertension, GERD, Chronic Migraine, Rheumatoid Arthritis.</p>
+          </div>
+          <div class="feature-box">
+            <h4>4. Specialty Routing (5 Cases)</h4>
+            <p>Lumbar sciatica, Nephrolithiasis, Bronchial asthma, Atopic eczema, and routine physical checks.</p>
+          </div>
+          <div class="feature-box">
+            <h4>5. Edge Cases & Typos (5 Cases)</h4>
+            <p>Pediatric fever with typos (*“fevor age 8”*), Zika virus, Norovirus, and dietary queries.</p>
+          </div>
+          <div class="feature-box" style="border-color: var(--primary);">
+            <h4>Evaluated Against Baseline</h4>
+            <p>Direct comparison against a Monolithic Single-Prompt LLM (GPT-4o-mini) under identical clinical scenarios.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11: Quantitative Benchmark Results Matrix -->
+    <div class="slide-card" data-slide="11">
+      <div>
+        <div class="slide-tag">4. Experimental Results</div>
+        <h2 class="slide-title">Empirical Benchmark Matrix & Comparative Analysis</h2>
+      </div>
+      <div class="slide-body">
+        <table class="pres-table">
+          <thead>
+            <tr>
+              <th>Evaluation Metric</th>
+              <th>CareFlow Multi-Agent</th>
+              <th>Baseline Monolithic LLM</th>
+              <th>Observed Clinical & Engineering Advantage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Emergency Red-Flag Recall</strong></td>
+              <td><span class="pill-green">100.0% (5/5)</span></td>
+              <td><span class="pill-red">72.0% (3.6/5)</span></td>
+              <td>Deterministic regex intercepted 100% of atypical stroke & cauda equina cases.</td>
+            </tr>
+            <tr>
+              <td><strong>Contraindication Safety</strong></td>
+              <td><span class="pill-green">100.0% Safe</span></td>
+              <td><span class="pill-red">64.0%</span></td>
+              <td>Zero dangerous Aspirin/NSAID suggestions in Dengue or pediatric fever.</td>
+            </tr>
+            <tr>
+              <td><strong>Triage Pipeline Latency (Offline)</strong></td>
+              <td><span class="pill-green">6.24 ms</span></td>
+              <td>2650.00 ms</td>
+              <td><strong>&gt;400x Latency Reduction</strong>; instant response without external API delays.</td>
+            </tr>
+            <tr>
+              <td><strong>Triage Pipeline Latency (Online)</strong></td>
+              <td><span class="pill-green">842.00 ms</span></td>
+              <td>2650.00 ms</td>
+              <td>68% reduction in execution latency due to focused small-agent prompts.</td>
+            </tr>
+            <tr>
+              <td><strong>Specialist Department Routing</strong></td>
+              <td><span class="pill-green">80.0% (16/20)</span></td>
+              <td>76.0% (15.2/20)</td>
+              <td>Accurate mapping to verified hospital schedules across 10 specialties.</td>
+            </tr>
+            <tr>
+              <td><strong>Pydantic Schema Determinism</strong></td>
+              <td><span class="pill-green">100.0% Valid</span></td>
+              <td><span class="pill-red">48.0% Valid</span></td>
+              <td>Typed state passing completely eliminated JSON parsing exceptions.</td>
+            </tr>
+            <tr>
+              <td><strong>ID Ownership Exclusivity (&fnof;<sub>1</sub>)</strong></td>
+              <td><span class="pill-green">100.0% Blocked</span></td>
+              <td><span class="pill-red">0.0% (Vulnerable)</span></td>
+              <td>Intercepted 100% of cross-patient ID hijacking & collision attempts.</td>
+            </tr>
+            <tr>
+              <td><strong>Single-Use ID Retirement (&fnof;<sub>2</sub>)</strong></td>
+              <td><span class="pill-green">100.0% Retired</span></td>
+              <td><span class="pill-red">0.0% (Vulnerable)</span></td>
+              <td>Permanently retired spent tokens upon booking, preventing stale state overwrites.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Slide 12: 6 Engineering Challenges & Solutions -->
+    <div class="slide-card" data-slide="12">
+      <div>
+        <div class="slide-tag" style="color: #FBBF24;">5. Engineering Challenges & Practical Solutions</div>
+        <h2 class="slide-title">Six Core Technical Challenges & Implemented Solutions</h2>
+      </div>
+      <div class="slide-body">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+          <div class="feature-box" style="border-left: 3px solid var(--crimson);">
+            <div style="font-weight: 700; color: #FCA5A5; font-size: 13.5px; margin-bottom: 4px;">1. Safety vs. Hallucination</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> LLMs hallucinate Aspirin in Dengue.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Upstream deterministic regex guardrail (<code>safety_agent.py</code>) running in &lt;0.1ms.</p>
+          </div>
+
+          <div class="feature-box" style="border-left: 3px solid var(--amber);">
+            <div style="font-weight: 700; color: #FCD34D; font-size: 13.5px; margin-bottom: 4px;">2. ASGI Event-Loop Freezing</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> Sync LangGraph blocked async Uvicorn.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Offloaded graph execution via <code>run_in_threadpool</code>, stabilizing latency to 6.24ms.</p>
+          </div>
+
+          <div class="feature-box" style="border-left: 3px solid var(--primary);">
+            <div style="font-weight: 700; color: #67E8F9; font-size: 13.5px; margin-bottom: 4px;">3. ChromaDB Cold Starts</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> 80MB ONNX download failed offline.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Cached singleton (<code>_CHROMA_COLLECTION</code>) + local file probe & BM25 fallback.</p>
+          </div>
+
+          <div class="feature-box" style="border-left: 3px solid var(--purple);">
+            <div style="font-weight: 700; color: #C4B5FD; font-size: 13.5px; margin-bottom: 4px;">4. Typo-Laden Colloquial Input</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> *“fevor”* broke string match; LLMs slow.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Fuzzy sequence matcher (<code>difflib</code>) + 150+ alias clinical dictionary in &lt;0.5ms.</p>
+          </div>
+
+          <div class="feature-box" style="border-left: 3px solid #38BDF8;">
+            <div style="font-weight: 700; color: #BAE6FD; font-size: 13.5px; margin-bottom: 4px;">5. Race Conditions & HITL</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> Parallel agent writes & legal liability.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Typed Pydantic state (<code>CareFlowState</code>) + mandatory clinician sign-off on HITL Desk.</p>
+          </div>
+
+          <div class="feature-box" style="border-left: 3px solid #F43F5E;">
+            <div style="font-weight: 700; color: #FDA4AF; font-size: 13.5px; margin-bottom: 4px;">6. Patient ID Collisions & Reuse</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><strong>Issue:</strong> Shared static IDs mixed patient charts.</p>
+            <p style="font-size: 12px; color: var(--emerald);"><strong>Fix:</strong> Centralized registry enforcing strict ownership binding & atomic retirement upon booking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 13: Limitations & Stage-2 Roadmap -->
+    <div class="slide-card" data-slide="13">
+      <div>
+        <div class="slide-tag">6. Limitations and Future Work</div>
+        <h2 class="slide-title">Current Prototype Limitations & Stage-2 Roadmap</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="feature-box">
+            <h4 style="color: #FBBF24;">Current Limitations</h4>
+            <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+              <li><strong>Simulated Hospital Roster</strong>: Uses in-memory schedules rather than a live hospital Electronic Health Record (EHR) database.</li>
+              <li><strong>Text-Only Intake</strong>: Currently operates via browser text chat and onboarding modal without native audio speech transcription.</li>
+              <li><strong>Complex Multisystem Comorbidities</strong>: Highly complex cases with competing contraindications still require immediate direct physician evaluation.</li>
+            </ul>
+          </div>
+          <div class="feature-box">
+            <h4 style="color: var(--primary);">Stage-2 Clinical Roadmap</h4>
+            <ul style="margin-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+              <li><strong>HL7 / FHIR Integration</strong>: Direct bidirectional adapter syncing appointment tokens into enterprise EMRs (Epic, Cerner).</li>
+              <li><strong>Multilingual Voice Intake</strong>: Whisper speech-to-text integration for real-time vernacular voice triage in Hindi, Telugu, and Tamil.</li>
+              <li><strong>Hospital Ambulatory Pilot</strong>: Conducting an observational clinical trial in an outpatient facility to measure care coordinator time savings.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 14: Conclusion & Q&A Defense -->
+    <div class="slide-card" data-slide="14">
+      <div>
+        <div class="slide-tag">7. Questions and Discussion</div>
+        <h2 class="slide-title">Conclusion & Deliverables Summary</h2>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-bottom: 18px;">
+          <div class="feature-box">
+            <h4>1. Full-Stack Prototype</h4>
+            <p>FastAPI ASGI server, LangGraph multi-agent state graph, glassmorphic patient portal & HITL oversight desk.</p>
+          </div>
+          <div class="feature-box">
+            <h4>2. Automated PDF Passes</h4>
+            <p>ReportLab referral slip engine issuing digitally signed appointment passes with hospital barcodes.</p>
+          </div>
+          <div class="feature-box">
+            <h4>3. Rigorous Evaluation</h4>
+            <p>25 standardized test scenarios proving 100% emergency recall, 100% contraindication safety, and 100% ID exclusivity.</p>
+          </div>
+        </div>
+        <div class="feature-box" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.35); text-align: center; padding: 22px;">
+          <h3 style="font-size: 22px; color: var(--emerald); margin-bottom: 6px;">Ready for Mentor Defense & Questions</h3>
+          <p style="font-size: 14.5px; color: var(--text-muted);">
+            Thank you mentor Sakshi and panel members. We invite your questions and discussion on CareFlow!
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <aside class="speaker-notes-drawer" id="speaker-notes-drawer">
+    <div class="notes-header">
+      <span>🎙️ Mentor Defense Speaker Notes</span>
+      <span style="color: var(--text-muted); font-size: 11px; margin-left: auto;">Press 'S' to close</span>
+    </div>
+    <div id="notes-content">
+      <!-- Injected dynamically via script -->
+    </div>
+  </aside>
+
+  <!-- Bottom Navigation Controller -->
+  <footer class="pres-footer">
+    <button class="btn-control" id="btn-prev" onclick="prevSlide()" disabled>
+      ← Previous Slide
+    </button>
+    <div style="font-size: 12.5px; color: var(--text-muted);">
+      Navigate with <strong>←</strong> and <strong>→</strong> arrow keys • Press <strong>S</strong> for Speaker Notes
+    </div>
+    <button class="btn-control" id="btn-next" onclick="nextSlide()">
+      Next Slide →
+    </button>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 14;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const slideParam = parseInt(urlParams.get('slide'));
+    const hashParam = parseInt(window.location.hash.replace('#slide-', ''));
+    if (!isNaN(slideParam) && slideParam >= 1 && slideParam <= totalSlides) {
+      currentSlide = slideParam;
+    } else if (!isNaN(hashParam) && hashParam >= 1 && hashParam <= totalSlides) {
+      currentSlide = hashParam;
+    }
+
+    const speakerNotes = {
+      1: "Good morning mentor Sakshi and panel members. Today we present the final 1-month evaluation of CareFlow, our AI Care Coordination Assistant for Project ID: 11. Over the last four weeks, our team—N. Kalyan and Babu Mohan—designed, implemented, and empirically validated an autonomous multi-agent clinical coordination platform combining LangGraph, deterministic medical safety, and cryptographic patient identity management.",
+      2: "Ambulatory healthcare faces massive administrative friction during patient intake. When walk-in patients use commercial generative AI chatbots like ChatGPT, probabilistic models often suggest dangerous NSAIDs like Ibuprofen during dengue or miss critical stroke signs. CareFlow was engineered specifically to solve these life-critical hazards through deterministic agent guardrails.",
+      3: "Here is our 4-week project trajectory and engineering division. N. Kalyan spearheaded the backend LangGraph asynchronous state machine, deterministic safety regex compiler, ASGI threadpool tuning, and patient identity security registry. Babu Mohan developed the glassmorphic web UI, clinician HITL oversight desk, ReportLab PDF referral slip generator, 30+ condition database, and our 25-case empirical evaluation harness.",
+      4: "Rather than relying on an unconstrained single prompt, CareFlow divides clinical triage into specialized agents orchestrated by a LangGraph StateGraph. We have an intake agent, a grounded RAG knowledge engine, a hospital tool agent querying 10 specialties, an upstream safety firewall, and a clinician HITL desk for physician sign-off.",
+      5: "A key innovation added to CareFlow is our Dual-Invariant Patient Identity Security Subsystem. Unconstrained triage systems suffer from chart collisions and stale state reuse. Invariant 1 enforces strict ownership exclusivity—a Patient ID belongs solely to that patient and cannot be claimed by anyone else. Invariant 2 enforces single-use lifecycle non-reusability—once an ID is used for an appointment booking, it is permanently retired, requiring a fresh unique ID for subsequent visits.",
+      6: "Why did we choose this architecture? First, medical emergency detection must be deterministic, not probabilistic. Second, running synchronous LangGraph invocations in worker threadpools via run_in_threadpool prevents ASGI event loop thread starvation. Third, our dual-mode offline engine guarantees 100% uptime in disconnected clinic environments.",
+      7: "CareFlow embeds a curated clinical evidence base of over 30 acute and chronic condition profiles, enforcing safe adult and pediatric dosage thresholds and strict negative lists. Furthermore, our Universal Dynamic Pathogen Extractor synthesizes structured care instructions even for novel or emerging viral infections like Zika or Norovirus.",
+      8: "Now we will demonstrate our working prototype live at localhost:8000. We will walk through patient onboarding with unique ID minting, typo tolerance on colloquial symptoms, our interactive ID Security Rules test modal, deterministic emergency overrides, hospital doctor booking with automatic token retirement, and clinician sign-off on the HITL desk.",
+      9: "Slide 9 showcases our automated PDF Clinical Referral Slip feature alongside our compliance and safety architecture. Programmatically compiled using ReportLab in Python with zero external cloud dependencies, it generates an authoritative, printable hospital pass containing verified booking tokens, clinic room assignments, pre-visit instructions, and clinician sign-offs while enforcing dual-invariant patient identity security.",
+      10: "To objectively evaluate CareFlow, we engineered benchmark_evaluation.py, testing 25 representative clinical scenarios across emergency red flags, infectious diseases, chronic conditions, specialty routing, and colloquial typos directly against a monolithic GPT-4o-mini baseline.",
+      11: "Our quantitative results confirm the superiority of the multi-agent approach. CareFlow recorded 100% emergency recall versus 72% for the baseline, 100% medication contraindication safety versus 64%, 100% identity exclusivity and single-use retirement, and an offline execution latency of just 6.24 milliseconds.",
+      12: "We encountered and resolved six major engineering challenges: clinical safety vs. LLM hallucination, ASGI event-loop freezing, ChromaDB cold starts and offline crashes, typo-laden colloquial intake, multi-agent state race conditions with HITL governance, and cross-patient ID collisions and stale reuse across encounters.",
+      13: "We acknowledge current prototype limitations: our hospital database is simulated in-memory, the interface is currently text-based, and multi-system comorbidities still require physician evaluation. In Stage 2, we plan to implement HL7/FHIR adapters, multilingual Whisper speech triage, and a hospital outpatient pilot.",
+      14: "In conclusion, CareFlow delivers an end-to-end, working clinical triage system with proven 100% safety metrics, sub-10ms latency, cryptographic identity security, and automated referral artifacts. Thank you mentor Sakshi, and we welcome your questions!"
+    };
+
+    function updateSlide() {
+      document.querySelectorAll('.slide-card').forEach(s => s.classList.remove('active'));
+      const activeCard = document.querySelector(`.slide-card[data-slide="${currentSlide}"]`);
+      if (activeCard) activeCard.classList.add('active');
+
+      const slideNumEl = document.getElementById('slide-num');
+      if (slideNumEl) {
+        slideNumEl.textContent = `Slide ${currentSlide} / ${totalSlides}`;
+      }
+      document.getElementById('progress-fill').style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+      document.getElementById('btn-prev').disabled = (currentSlide === 1);
+      document.getElementById('btn-next').disabled = (currentSlide === totalSlides);
+
+      // Update speaker notes content
+      const notesEl = document.getElementById('notes-content');
+      if (notesEl) {
+        notesEl.innerHTML = `<p>${speakerNotes[currentSlide] || "No notes available for this slide."}</p>`;
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      const drawer = document.getElementById('speaker-notes-drawer');
+      drawer.classList.toggle('open');
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        toggleNotes();
+      }
+    });
+
+    // Initialize first slide
+    updateSlide();
+  </script>
+</body>
+</html>

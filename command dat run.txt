@@ -1,0 +1,11 @@
+# CareFlow Quick Run Commands
+
+# 1. Start Web Server (Backend & Frontend at http://localhost:8000)
+source .venv/bin/activate
+python server.py
+
+# 2. Run 25-Case Empirical Benchmark Evaluation
+python benchmark_evaluation.py
+
+# 3. Open Interactive Presentation Slides
+google-chrome CareFlow_Presentation.html
